@@ -1,0 +1,278 @@
+<!-------------------------
+v9: fix v8 bug: hiremen can now be killed
+backgroundco introduced to solve issue when running pass a hireman
+v10: variablelize cooldown, make easier for balancing
+v11: spawning intergrated at the end of move, more balancing
+-------------------------->
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" onkeydown="mov(event.keyCode);">
+<head>
+<style>
+table{
+border-collapse:collapse;
+}
+table,td,tr{
+	border-color:#000000;
+	border:1px solid black;
+}	
+td{
+width:20px;
+height:20px;
+
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Tb</title>
+
+</head>
+<body>
+Bomb:<span id="b">0</span>&nbsp;&nbsp;&nbsp;
+Gun:<span id="g">0</span>&nbsp;&nbsp;&nbsp;
+Fire shield:<span id="f">0</span>&nbsp;&nbsp;&nbsp;
+Coin:<span id="c">0</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Zom num:<span id="n"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Zom wave:<span id="w"></span>
+<table id="p"></table>
+</body>
+<script>
+bodyco="red";
+backgroundco="transparent";
+tbhei=26;tbwid=59;
+txt="";
+gu=true;
+var bo=true;
+firsh=true;
+fi=0;
+bomcd=18;
+guncd=20;
+fircd=22;
+firlt=10;
+spacd=1;
+wavcd=45;
+hirpr=15;
+hiremeni=new Array();
+hiremenj=new Array();
+for(var i=0;i<tbhei;i++){
+	txt+="<tr>";//alert(123);
+	for(var j=0;j<tbwid;j++){
+		txt+="<td id='"+i+"_"+j+"'></td>";
+	}
+	txt+="</tr>";
+}
+//txt+="</table>";
+document.getElementById("p").innerHTML=txt;
+di=[];dj=[];
+for(var i=0;i<40;i++){
+	spawn();
+	//document.getElementById(di[i]+"_"+dj[i]).style.backgroundColor="black";
+}
+var d=new Date();
+ni=13;nj=30;col(bodyco);
+ddi=[-1,-1,-1,0,1,1,1,0];
+ddj=[1,0,-1,-1,-1,0,1,1];
+setInterval(move,1000);
+//countdown(spacd,"s",0);
+countdown(wavcd,"w",0);
+coin=0;
+function lose(){
+	var n=new Date();
+	alert("You lost!\nTime survived: "+(n-d)/1000+" seconds");
+	ni=null;
+	nj=null;
+}
+function kill(k){
+	di.splice(k,1);
+	dj.splice(k,1);
+	coin++;
+	document.getElementById("c").innerHTML=coin;
+}
+function countdown(i,id,d){
+	
+	document.getElementById(id).innerHTML=i;
+	if(i==0){zero(id,d);return;}
+	setTimeout(countdown,1000,i-1,id,d);
+}
+function zero(id,d){
+	if(id=="b")bo=true;
+	if(id=="g")gu=true;
+	
+	if(id=="f"){
+		if(d==0){fi=0;countdown(fircd,"f",1);bodyco="red";col(bodyco);}
+		else firsh=true;
+	}
+	//if(id=="h")hi=true;
+	if(id=="w"){
+		var znum=di.length;
+		for(var i=0;i<znum;i++){
+			spawn();
+		}
+		countdown(wavcd,"w",0);
+	}
+}
+function move(){
+	color("transparent","transparent");
+	for(var a=0;a<di.length;a++){
+		var temi=[];var temj=[];
+		for(var b=0;b<8;b++){var v=0;var x=0;var y=0;
+			if(di[a]+ddi[b]>=0&&dj[a]+ddj[b]>=0&&di[a]+ddi[b]<tbhei&&dj[a]+ddj[b]<tbwid){
+				if(ddi[b]*(ni-di[a])>0)x=1;if(ddi[b]*(ni-di[a])<0)x=-1;//alert(ddi[b]*(ni-di[a]));
+				if(ddj[b]*(nj-dj[a])>0)y=1;if(ddj[b]*(nj-dj[a])<0)y=-1;
+				v=x+y+2;
+			}
+			for(var d=0;d<v;d++){temi.push(di[a]+ddi[b]);temj.push(dj[a]+ddj[b]);}
+		}
+		var e=temi.length;
+		q=Math.floor(e*Math.random());
+		di[a]=temi[q];dj[a]=temj[q];
+	}
+		for(var a=0;a<hiremeni.length;a++){
+
+	var temi=[];var temj=[];
+		for(var b=0;b<8;b++){var v=0;var x=0;var y=0;
+			if(hiremeni[a]+ddi[b]>=0&&hiremenj[a]+ddj[b]>=0&&hiremeni[a]+ddi[b]<tbhei&&hiremenj[a]+ddj[b]<tbwid){
+				if(ddi[b]*(ni-hiremeni[a])>0)x=1;if(ddi[b]*(ni-hiremeni[a])<0)x=-1;
+				if(ddj[b]*(nj-hiremenj[a])>0)y=1;if(ddj[b]*(nj-hiremenj[a])<0)y=-1;
+				v=x+y+2;
+			}
+			for(var d=0;d<v;d++){temi.push(hiremeni[a]+ddi[b]);temj.push(hiremenj[a]+ddj[b]);}
+		}
+		var e=temi.length;
+		q=Math.floor(e*Math.random());
+		hiremeni[a]=temi[q];hiremenj[a]=temj[q];
+		}
+	color("black","green");
+	for(var a=0;a<hiremeni.length;a++){
+		if(!checkhi(hiremeni[a],hiremenj[a])){
+			hiremeni.splice(a,1);
+			hiremenj.splice(a,1);
+		}
+	}
+	if(!check(ni,nj))lose();
+	spawn();
+}
+function color(co,col){
+	var z=di.length;
+	for(var i=0;i<z;i++){
+		document.getElementById(di[i]+"_"+dj[i]).style.backgroundColor=co;
+	}
+	var t=hiremeni.length;
+	for(var i=0;i<t;i++){
+		document.getElementById(hiremeni[i]+"_"+hiremenj[i]).style.backgroundColor=col;
+	}
+}
+function checkhi(i,j){
+	var d=di.length;
+	for (var k=0;k<d;k++){
+		if(di[k]==i&&dj[k]==j){
+			return false;
+			
+		}
+		if(Math.abs(di[k]-i)+Math.abs(dj[k]-j)==1){
+			document.getElementById(di[k]+"_"+dj[k]).style.backgroundColor="transparent";
+			kill(k);document.getElementById("n").innerHTML=di.length;
+		}
+	}
+	return true;
+}
+function check(i,j){
+	var d=di.length;
+	for (var k=0;k<d;k++){
+		if(di[k]==i&&dj[k]==j){
+			if(fi==0)return false;
+			else {document.getElementById(di[k]+"_"+dj[k]).style.backgroundColor=bodyco;backgroundco="transparent";
+				kill(k);
+				document.getElementById("n").innerHTML=di.length;
+				}
+		}
+	}
+	return true;
+}
+function mov(a){
+	if(a==13&&bo){
+		bo=false;
+		for(var k=0;k<di.length;k++){
+			if(di[k]>ni-3&&di[k]<ni+3&&dj[k]>nj-3&&dj[k]<nj+3){
+				document.getElementById(di[k]+"_"+dj[k]).style.backgroundColor="transparent";
+				kill(k);
+			}
+		}
+		countdown(bomcd,"b",0);
+		document.getElementById("n").innerHTML=di.length;
+	}
+	if(a==17&&gu){
+		gu=false;
+		for(var k=0;k<di.length;k++){
+			if(di[k]==ni||dj[k]==nj){
+				document.getElementById(di[k]+"_"+dj[k]).style.backgroundColor="transparent";
+				kill(k);
+			}
+		}
+		countdown(guncd,"g",0);
+		document.getElementById("n").innerHTML=di.length;
+	}
+	if(a==32&&firsh){
+		firsh=false;
+		fi=1;bodyco="yellow";col( bodyco);
+		countdown(firlt,"f",0);
+	}
+	if(a==16&&coin>=hirpr){
+		coin-=hirpr;
+		document.getElementById("c").innerHTML=coin;
+		//hi=false;
+		var i=hiremeni.length;
+	var x=Math.random();
+	var q=Math.floor(x*tbhei);
+	hiremeni[i]=q;
+	x=Math.random();
+	q=Math.floor(x*tbhei);
+	hiremenj[i]=q;
+	document.getElementById(hiremeni[i]+"_"+hiremenj[i]).style.backgroundColor="green";
+	//countdown(60,"h",0);
+	}
+	if(a==37){
+	
+		col(backgroundco);if(nj==0)lose();
+		nj--;
+		backgroundco=document.getElementById(ni+"_"+nj).style.backgroundColor;
+		if(check(ni,nj))col(bodyco);
+		else lose();
+	}
+	if(a==38){
+	
+	col(backgroundco);if(ni==0)lose();
+		ni--;
+		backgroundco=document.getElementById(ni+"_"+nj).style.backgroundColor;
+		if(check(ni,nj))col(bodyco);
+		else lose();
+	}
+	if(a==39){
+	
+	col(backgroundco);if(nj==tbwid-1)lose();
+		nj++;backgroundco=document.getElementById(ni+"_"+nj).style.backgroundColor;if(check(ni,nj))col(bodyco);
+		else lose();
+	}
+	if(a==40){col(backgroundco);if(ni==tbhei-1)lose();
+		ni++;backgroundco=document.getElementById(ni+"_"+nj).style.backgroundColor;if(check(ni,nj))col(bodyco);
+		else lose();
+		
+	}
+}
+function spawn(){
+	var i=di.length;
+	var x=Math.random();
+	var q=Math.floor(x*tbhei);
+	di[i]=q;
+	x=Math.random();
+	q=Math.floor(x*tbwid);
+	dj[i]=q;
+	document.getElementById(di[i]+"_"+dj[i]).style.backgroundColor="blue";
+	document.getElementById("n").innerHTML=di.length;
+}
+function col(co){
+document.getElementById(ni+"_"+nj).style.backgroundColor=co;
+}
+</script>
+
+
+</html>
