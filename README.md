@@ -1,5 +1,6 @@
 # tbgame
-A simple survival game.
+A simple survival game. Try it at [tuongvule1.github.io/tbgame](https://tuongvule1.github.io/tbgame/). 
+
 You are the red square. The black squares are zombies. Avoid them, moving using the four up, down, left, right buttons. If you run into them, or they run into you, you die and the game ends.  
 Don't worry, you also have some weapons to fight the zombies - see Weapon sections. Becareful of the table edge - if you go out of the table, you die.  
 When you die, you will know how long you've survived, in seconds. This is your score.
